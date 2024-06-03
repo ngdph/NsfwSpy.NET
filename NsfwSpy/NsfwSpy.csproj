@@ -1,51 +1,52 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Authors>NsfwSpy</Authors>
-    <Company>NsfwSpy</Company>
-    <PackageTags>nsfw nude nudity porn pornography explicit image detect detection classification classifier machinglearning ml.net</PackageTags>
-    <Description>NsfwSpy is an image and video classifier used to identify explicit/pornographic content using machine learning.</Description>
-    <RepositoryUrl>https://github.com/NsfwSpy/NsfwSpy.NET</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/NsfwSpy/NsfwSpy.NET</PackageProjectUrl>
-    <PackageIcon>NsfwSpy-Icon.png</PackageIcon>
-    <PackageIconUrl />
-    <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>3.5.0</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<Authors>NsfwSpy</Authors>
+		<Company>NsfwSpy</Company>
+		<PackageTags>nsfw nude nudity porn pornography explicit image detect detection classification classifier machinglearning ml.net</PackageTags>
+		<Description>NsfwSpy is an image and video classifier used to identify explicit/pornographic content using machine learning.</Description>
+		<RepositoryUrl>https://github.com/NsfwSpy/NsfwSpy.NET</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/NsfwSpy/NsfwSpy.NET</PackageProjectUrl>
+		<PackageIcon>NsfwSpy-Icon.png</PackageIcon>
+		<PackageIconUrl />
+		<PackageLicenseExpression></PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<Version>3.5.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.1.2" />
-    <PackageReference Include="Microsoft.ML" Version="1.6.0" />
-    <PackageReference Include="Microsoft.ML.Vision" Version="1.6.0" />
-    <PackageReference Include="Mime" Version="3.4.0" />
-    <PackageReference Include="SciSharp.TensorFlow.Redist-Linux-GPU" Version="2.3.1" />
-    <PackageReference Include="SciSharp.TensorFlow.Redist-Windows-GPU" Version="2.3.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.8.0" />
+		<PackageReference Include="Microsoft.ML" Version="1.6.0" />
+		<PackageReference Include="Microsoft.ML.Vision" Version="1.6.0" />
+		<PackageReference Include="Mime" Version="3.6.0" />
+		<PackageReference Include="SciSharp.TensorFlow.Redist-Linux-GPU" Version="2.3.1" />
+		<PackageReference Include="SciSharp.TensorFlow.Redist-Windows-GPU" Version="2.3.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="NsfwSpy-Icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="NsfwSpy-Icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="NsfwSpy-Icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="NsfwSpy-Icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="NsfwSpyModel.zip">
-      <Pack>true</Pack>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="NsfwSpyModel.zip">
+			<Pack>true</Pack>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+		</None>
+	</ItemGroup>
 
 </Project>

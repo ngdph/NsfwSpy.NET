@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NsfwSpy\NsfwSpy.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\NsfwSpy\NsfwSpy.csproj" />
+	</ItemGroup>
 
 </Project>
