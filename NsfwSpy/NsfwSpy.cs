@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace NsfwSpyNS
@@ -38,10 +38,8 @@ namespace NsfwSpyNS
             var fileType = MimeGuesser.GuessFileType(imageData);
             if (fileType.Extension == "webp")
             {
-                using (MagickImage image = new MagickImage(imageData))
-                {
-                    imageData = image.ToByteArray(MagickFormat.Png);
-                }
+                using MagickImage image = new(imageData);
+                imageData = image.ToByteArray(MagickFormat.Png);
             }
 
             var modelInput = new ModelInput(imageData);
@@ -67,14 +65,16 @@ namespace NsfwSpyNS
         /// Classify an image from a web url.
         /// </summary>
         /// <param name="uri">Web address of the image to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the image with.</param>
+        /// <param name="client">A custom HttpClient to download the image with.</param>
         /// <returns>A NsfwSpyResult that indicates the predicted value and scores for the 5 categories of classification.</returns>
-        public NsfwSpyResult ClassifyImage(Uri uri, WebClient webClient = null)
+        public NsfwSpyResult ClassifyImage(Uri uri, HttpClient client = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            client ??= new HttpClient();
 
-            var fileBytes = webClient.DownloadData(uri);
-            var result = ClassifyImage(fileBytes);
+            var task = Task.Run(() => client.GetByteArrayAsync(uri));
+            task.Wait();
+
+            var result = ClassifyImage(task.Result);
             return result;
         }
 
@@ -94,13 +94,13 @@ namespace NsfwSpyNS
         /// Classify an image from a web url asynchronously.
         /// </summary>
         /// <param name="uri">Web address of the image to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the image with.</param>
+        /// <param name="client">A custom HttpClient to download the image with.</param>
         /// <returns>A NsfwSpyResult that indicates the predicted value and scores for the 5 categories of classification.</returns>
-        public async Task<NsfwSpyResult> ClassifyImageAsync(Uri uri, WebClient webClient = null)
+        public async Task<NsfwSpyResult> ClassifyImageAsync(Uri uri, HttpClient client = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            if (client == null) client = new HttpClient();
 
-            var fileBytes = await webClient.DownloadDataTaskAsync(uri);
+            var fileBytes = await client.GetByteArrayAsync(uri);
             var result = ClassifyImage(fileBytes);
             return result;
         }
@@ -124,12 +124,11 @@ namespace NsfwSpyNS
 
                 lock (sync)
                 {
-                    if (actionAfterEachClassify != null)
-                        actionAfterEachClassify.Invoke(filePath, result);
+                    actionAfterEachClassify?.Invoke(filePath, result);
                 }
             });
 
-            return results.ToList();
+            return [.. results];
         }
 
         /// <summary>
@@ -194,15 +193,17 @@ namespace NsfwSpyNS
         /// Classify a .gif file  from a web url.
         /// </summary>
         /// <param name="uri">Web address of the Gif to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the Gif with.</param>
+        /// <param name="client">A custom HttpClient to download the Gif with.</param>
         /// <param name="videoOptions">VideoOptions to customise how the frames of the file are classified.</param>
         /// <returns>A NsfwSpyFramesResult with results for each frame classified.</returns>
-        public NsfwSpyFramesResult ClassifyGif(Uri uri, WebClient webClient = null, VideoOptions videoOptions = null)
+        public NsfwSpyFramesResult ClassifyGif(Uri uri, HttpClient client = null, VideoOptions videoOptions = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            if (client == null) client = new HttpClient();
 
-            var gifImage = webClient.DownloadData(uri);
-            var results = ClassifyGif(gifImage, videoOptions);
+            var task = Task.Run(() => client.GetByteArrayAsync(uri));
+            task.Wait();
+
+            var results = ClassifyGif(task.Result, videoOptions);
             return results;
         }
 
@@ -223,14 +224,14 @@ namespace NsfwSpyNS
         /// Classify a .gif file  from a web url asynchronously.
         /// </summary>
         /// <param name="uri">Web address of the Gif to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the Gif with.</param>
+        /// <param name="client">A custom HttpClient to download the Gif with.</param>
         /// <param name="videoOptions">VideoOptions to customise how the frames of the file are classified.</param>
         /// <returns>A NsfwSpyFramesResult with results for each frame classified.</returns>
-        public async Task<NsfwSpyFramesResult> ClassifyGifAsync(Uri uri, WebClient webClient = null, VideoOptions videoOptions = null)
+        public async Task<NsfwSpyFramesResult> ClassifyGifAsync(Uri uri, HttpClient client = null, VideoOptions videoOptions = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            if (client == null) client = new HttpClient();
 
-            var gifImage = await webClient.DownloadDataTaskAsync(uri);
+            var gifImage = await client.GetByteArrayAsync(uri);
             var results = ClassifyGif(gifImage, videoOptions);
             return results;
         }
@@ -298,15 +299,17 @@ namespace NsfwSpyNS
         /// Classify a .gif file  from a web url.
         /// </summary>
         /// <param name="uri">Web address of the video to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the video with.</param>
+        /// <param name="client">A custom HttpClient to download the video with.</param>
         /// <param name="videoOptions">VideoOptions to customise how the frames of the file are classified.</param>
         /// <returns>A NsfwSpyFramesResult with results for each frame classified.</returns>
-        public NsfwSpyFramesResult ClassifyVideo(Uri uri, WebClient webClient = null, VideoOptions videoOptions = null)
+        public NsfwSpyFramesResult ClassifyVideo(Uri uri, HttpClient client = null, VideoOptions videoOptions = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            if (client == null) client = new HttpClient();
 
-            var video = webClient.DownloadData(uri);
-            var results = ClassifyVideo(video, videoOptions);
+            var task = Task.Run(() => client.GetByteArrayAsync(uri));
+            task.Wait();
+
+            var results = ClassifyVideo(task.Result, videoOptions);
             return results;
         }
 
@@ -327,14 +330,14 @@ namespace NsfwSpyNS
         /// Classify a .gif file  from a web url asynchronously.
         /// </summary>
         /// <param name="uri">Web address of the video to be classified.</param>
-        /// <param name="webClient">A custom WebClient to download the video with.</param>
+        /// <param name="client">A custom HttpClient to download the video with.</param>
         /// <param name="videoOptions">VideoOptions to customise how the frames of the file are classified.</param>
         /// <returns>A NsfwSpyFramesResult with results for each frame classified.</returns>
-        public async Task<NsfwSpyFramesResult> ClassifyVideoAsync(Uri uri, WebClient webClient = null, VideoOptions videoOptions = null)
+        public async Task<NsfwSpyFramesResult> ClassifyVideoAsync(Uri uri, HttpClient client = null, VideoOptions videoOptions = null)
         {
-            if (webClient == null) webClient = new WebClient();
+            if (client == null) client = new HttpClient();
 
-            var video = await webClient.DownloadDataTaskAsync(uri);
+            var video = await client.GetByteArrayAsync(uri);
             var results = ClassifyVideo(video, videoOptions);
             return results;
         }
